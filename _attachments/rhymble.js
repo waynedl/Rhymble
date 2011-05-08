@@ -16,7 +16,10 @@ function Round(){
     R.buffer_length = 5;
     R.buffer_index = 0;
     
-    this.getRound = function(){
+	/**
+	 * from CouchDB
+	 */
+    this.get_round_from_couch = function(){
         var limit = 1;
         var skip = Math.floor(Math.random() * 1000);  // # of docs in rhymble db
         
@@ -45,17 +48,45 @@ function Round(){
 
     }
 
-    R.drawRound = function(){
+	/**
+	 * from file
+	 */
+    this.get_round = function(){
+        $.ajax({
+                url:  './rhymbes.json'
+            ,   async: false
+            ,   dataType: 'json'
+            ,   success: function(data){
+					n = get_random_in_range(0, data.length);
+					R.round = data[n];
+					R.round.rhyme_map = {};
+					$.each(R.round.rhymes, function(k, v){
+					    var len = v.length;
+					    if (R.round.rhyme_map[len] == undefined){
+					        R.round.rhyme_map[len] = new Array();
+					    }                    
+					    R.round.rhyme_map[len].push(v);
+					});
+					
+					$('body').trigger('finishedLoadingRound');
+
+				}
+        })
+
+    }
+
+
+    R.draw_round = function(){
         $('#title').html(R.round.word);
 
         $('#board').html('');        
-        for (var i in R.round.rhyme_map){
-            var n_letters = R.round.rhyme_map[i][0].length;
+        $.each(R.round.rhyme_map, function(k, v){
+            var n_letters = v[0].length;
             var width = n_letters * 15;
             var div = $('<div class="column" id="'+n_letters+'"></div>');
             div.css('width',width);
-            for (var n in R.round.rhyme_map[i]){
-                var word = R.round.rhyme_map[i][n];
+            for (var n in v){
+                var word = v[n];
                 var r_div = $('<div></div>');
                 r_div.attr('title',word);
                 r_div.attr('class','rhyme');
@@ -68,7 +99,7 @@ function Round(){
             
             $('INPUT[name=input]').focus();
             $('INPUT[name=input]').val('');
-        }
+        });
         
     }
 
@@ -78,7 +109,7 @@ function Round(){
         
         // Enter key is pressed
         if (e.keyCode == 13) {
-            var v = $('INPUT[name=input]').val();
+            var v = $('INPUT[name=input]').val().toUpperCase();
             R.to_buffer(v);
             if (v == ''){return null}
             var match = ($('#'+v).attr('id') != undefined);
@@ -121,9 +152,9 @@ function Round(){
         return false
     });
 
+    $('body').bind('finishedLoadingRound',R.draw_round);
 
-    R.getRound()
-    $('body').bind('finishedLoadingRound',R.drawRound);
+    R.get_round()
 
     return true
 
@@ -232,4 +263,8 @@ if (!window.console || !console)
   for (var i = 0; i < names.length; ++i)
     window.console[names[i]] = function() {}
 }
+
+function get_random_in_range(M, N){
+	return num = Math.floor(M + (1+N-M)*Math.random());
+};
 
