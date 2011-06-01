@@ -15,42 +15,10 @@ function Round(){
     R.buffer = new Array();  // R.buffer_length most recent guesses
     R.buffer_length = 5;
     R.buffer_index = 0;
-    
-	/**
-	 * from CouchDB
-	 */
-    this.get_round_from_couch = function(){
-        var limit = 1;
-        var skip = Math.floor(Math.random() * 1000);  // # of docs in rhymble db
-        
-        $.ajax({
-                url:  '/rhymble/_all_docs?include_docs=true&limit='+limit+'&skip='+skip
-            ,   async: false
-            ,   crossDomain: true
-            ,   dataType: 'jsonp'
-            ,   success: function(data){
-                var doc = data.rows[0].doc;
-                doc.rhyme_map = {};
-        
-                for (var i in doc.rhymes){
-	                var len = doc.rhymes[i].length;
-	                if (doc.rhyme_map[len]==undefined){
-                        doc.rhyme_map[len] = new Array();
-                    }                    
-	                doc.rhyme_map[len].push(doc.rhymes[i]);
-                }
-        
-        
-                R.round = doc;
-                $('body').trigger('finishedLoadingRound');
-            }
-        })
 
-    }
-
-	/**
-	 * from file
-	 */
+    /**
+     * from file
+     */
     this.get_round = function(){
         $.ajax({
                 url:  './rhymbes.json'
