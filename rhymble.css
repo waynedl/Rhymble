@@ -1,82 +1,46 @@
-BODY {
-    margin:25px;
+[data-role=page]{
+    background: white !important;   
 }
-#title{
-}
-#stats{
-    position:absolute;
-    top:0px;
-    left:500px;
-    font-size:20px;
-}
-#message {
-    position:absolute;
-    top:40px;
-    left:250px;
-    font-size:40px;
-}
-.match {
-    color:#121212;
-}
-.not-match {
-    color:red;
-}
-.column {
+#round_header DIV {
     clear:none;
-    float:left;
+    float: left;
+    background: blue;
+    width: 33%;
+    height: 30px;
 }
-.rhyme {
-    height:25px;
-    background: #FDE85F;
-    border:2px #5F63FD solid;
-    line-height:25px;
-    font-size:20px;
-    text-align:center;
-    float:left;
-    clear:none;
-}
-.rhyme SPAN {
-    display:none;
-}
-#input {
-    position:relative;
-    width:460px;
-    height:50px;
-}
-    #input INPUT[name=input]{
-        height:50px;
-        width:400px;
-        font-size:40px;
-        line-height:50px;
-        padding-left:30px;
-        padding-right:30px;
-    }
-#buttons {
-    position:absolute;
-    top:-5px;
-    right:-80px;
-}
-.button {
-}
-
-
-#cover {
-    position: absolute;
-    top: 0;
-    left: 0;
+#round {
+    clear: both;
     width: 100%;
-    height: 100%;
-    z-index: 10;
-    display: none;
-    background-color: #000000;
-    opacity: .7;
-    filter:progid:DXImageTransform.Microsoft.BasicImage(opacity=.7);
+    height: 100px;
 }
-#game-over {
-    position:absolute;
-    top:50px;
-    left:30px;
-    z-index:20;
-    font-size:45px;
-    color:white;
+#text_area {
+    font-size: 2em;
+}
+.key{
+    clear: none;
+    float: left;
+    height: 35px;
+    text-align: center;
+    padding-top: 15px;
+}
+#go_button {
+    width: 35px;    
+}
+#del_button {
+    width: 35px;
+    height: 25px;
+}
+.mask {
+    display: block;
+    position: relative;
+    top: -33px;
+    bottom: 0;
+    width: 100%;
+    height: 50px;  
+    background: blue;
+    opacity: .5;
+}
+
+#row1, #row2, #row3 {
+    clear: both;
 }

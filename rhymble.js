@@ -16,93 +16,25 @@ function Round(){
     R.buffer_length = 5;
     R.buffer_index = 0;
 
-    /**
-     * from file
-     */
-    this.get_round = function(){
+    R.load_success = function(data){
+	n = get_random_in_range(0, data.length);
+	R.round = data[n];
+	$('body').trigger('finishedLoadingRound');
+    };
+
+    R.get_round = function(){
         $.ajax({
-                url:  './rhymbes.json'
+                url:  './assets/rhymbes.json'
             ,   async: false
             ,   dataType: 'json'
-            ,   success: function(data){
-					n = get_random_in_range(0, data.length);
-					R.round = data[n];
-					R.round.rhyme_map = {};
-					$.each(R.round.rhymes, function(k, v){
-					    var len = v.length;
-					    if (R.round.rhyme_map[len] == undefined){
-					        R.round.rhyme_map[len] = new Array();
-					    }                    
-					    R.round.rhyme_map[len].push(v);
-					});
-					
-					$('body').trigger('finishedLoadingRound');
-
-				}
-        })
-
-    }
+            ,   success: R.load_success
+	});
+    };
 
 
     R.draw_round = function(){
-        $('#title').html(R.round.word);
 
-        $('#board').html('');        
-        $.each(R.round.rhyme_map, function(k, v){
-            var n_letters = v[0].length;
-            var width = n_letters * 15;
-            var div = $('<div class="column" id="'+n_letters+'"></div>');
-            div.css('width',width);
-            for (var n in v){
-                var word = v[n];
-                var r_div = $('<div></div>');
-                r_div.attr('title',word);
-                r_div.attr('class','rhyme');
-                r_div.attr('id',word);
-                r_div.css('width',width);
-                r_div.html('<span>'+word+'</span>');
-                div.append(r_div);
-            }
-            $('#board').append(div);
-            
-            $('INPUT[name=input]').focus();
-            $('INPUT[name=input]').val('');
-        });
-        
-    }
-
-    $('INPUT[name=input]').keyup(function(e){
-        e.stopPropagation();
-        e.preventDefault();
-        
-        // Enter key is pressed
-        if (e.keyCode == 13) {
-            var v = $('INPUT[name=input]').val().toUpperCase();
-            R.to_buffer(v);
-            if (v == ''){return null}
-            var match = ($('#'+v).attr('id') != undefined);
-            if (match) {
-                message(v,true);
-                $('#'+v+' SPAN').slideDown(800);
-                $('INPUT[name=input]').val('');
-                score += Math.round(v.length * (v.length / 2));
-                // "Worse" -Kaz Laporte
-                // score += v.length * v.length ;
-                $('#score').html(score);
-            } else {
-                message(v, false);
-                $('INPUT[name=input]').val('');
-            }
-            
-        // Up arrow key is pressed
-        } else if (e.keyCode == 38){
-            $('INPUT[name=input]').val(R.buffer[R.buffer_index]);
-            R.buffer_index += 1;
-            if (R.buffer_index >= R.buffer_length){
-                R.buffer_index = 0;
-            }
-        }
-    });
+    };
 
     R.to_buffer = function(v){
         if (R.buffer[0] != v){
@@ -140,6 +72,48 @@ function Game(){
     G.nextRound = 0;
     G.n_rounds = 10;
     G.time = 1 * 60;  // 1 minutes of seconds 
+
+    G.resize = function(){
+	// Keyboard Buttons
+	var w = ($(window).width() / 10) - 5;
+	$('.key').css({width: w+'px'});
+	$('#row2, #row3').css({paddingLeft: w/2});
+
+	// Round area
+	var round_height = $(window).height() - 200; 
+	$('#round').height(round_height);
+
+    }
+
+    G.draw_keyboard = function(){
+	var keyboard = $('#keyboard');
+	function make_row_of_buttons(n_row, row){
+	    var div = $('#row'+n_row);
+	    if (n_row==3){div.append('<img class="key" id="go_button" src="images/go.png" />');}
+            $.each(row, function(k,v){
+		div.append('<div class="key" letter="'+v+'"><span>'+v+'</span></div>');    
+	    });
+	    if (n_row==3){div.append('<img class="key" id="del_button" src="images/del.png" />');}
+	    keyboard.append(div);
+	}
+	make_row_of_buttons(1, 'qwertyuiop');
+	make_row_of_buttons(2, 'asdfghjkl');
+	make_row_of_buttons(3, 'zxcvbnm');
+	
+	
+	$('.key').bind('tap', function(e){
+	    e.stopPropagation();
+	    e.stopImmediatePropagation();
+	    var letter = $(this).attr('letter');
+	    $('#text_area').append('<span>'+letter+'</span>');
+	    var tap_mask = $('<span class="mask">&nbsp;</span>'); 
+	    $(this).append(tap_mask);
+	    tap_mask.animate({opacity: 0}, function(){$(this).remove();})
+	    return false;
+	});
+	
+    };
+
     
     G.getNextRound = function (){
         if (G.rounds == G.n_rounds){
@@ -175,49 +149,20 @@ function Game(){
 
     };
     
-    $(document).ready(function(){
-        
-        $('#score').html(score);
-        
-        $('INPUT[name=give-up]').click(function(e){
-            e.stopPropagation();
-            e.preventDefault();
-            $('.rhyme SPAN').slideDown(800);
-            $('INPUT[name=input]').focus();
-        });
-        
-        $('INPUT[name=new]').click(function(e){
-            e.stopPropagation();
-            e.preventDefault();
-            G.getNextRound();
-            $('INPUT[name=input]').focus();
-        });
-        
-        G.timer();
-
-    });
+    G.draw_keyboard();
+    G.resize();
+    G.getNextRound();
     
     return true
 };
 
-function message(msg,match){
-    $('#message').html('<span>'+msg+'</span>');
-    $('#message').slideDown(200);
-    if (match) {
-        $('#message SPAN').addClass('match');
-    } else {
-        $('#message SPAN').addClass('not-match');
-    }
-    window.setTimeout(function(){
-        $('#message').fadeOut(700);
-    }, 400 );
+function msg(msg){
+    $('#text_area').html(msg);
 };
 
 
 $(document).ready(function(){
     g = new Game();
-    g.getNextRound();
-    
 })
 
 
@@ -236,3 +181,27 @@ function get_random_in_range(M, N){
 	return num = Math.floor(M + (1+N-M)*Math.random());
 };
 
+var fixgeometry = function() {
+    /* Some orientation changes leave the scroll position at something
+     * that isn't 0,0. This is annoying for user experience. */
+    scroll(0, 0);
+
+    /* Calculate the geometry that our content area should take */
+    var header = $(".header:visible");
+    var footer = $(".footer:visible");
+    var content = $(".content:visible");
+    var viewport_height = $(window).height();
+    
+    var content_height = viewport_height - header.outerHeight() - footer.outerHeight();
+    
+    /* Trim margin/border/padding height */
+    content_height -= (content.outerHeight() - content.height());
+    content.height(content_height);
+
+    g.resize();    
+
+}; /* fixgeometry */
+
+$(document).ready(function() {
+    $(window).bind("orientationchange resize pageshow", fixgeometry);
+});
