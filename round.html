@@ -4,6 +4,7 @@
     <head> 
         <script type="text/javascript" src="./jquery-1.6.min.js"></script>
         <script type="text/javascript" src="./jquery.mobile-1.0a4.1.min.js"></script>
+        <script type="text/javascript" src="./iscroll-lite-min.js"></script>
         <script type="text/javascript" src="./rhymble.js"></script>
         <link href="./jquery.mobile-1.0a4.1.min.css" rel="stylesheet" type="text/css">
         <link href="./rhymble.css" rel="stylesheet" type="text/css">
@@ -16,22 +17,21 @@
                         <div id="back_button">
                             <a href="index.html">&#x21A9;</a>
                         </div>
-                        <div id="prompt">Blueberry</div>
-                        <div id="clock">1:34</div>
+                        <div id="prompt"></div>
+                        <div id="clock"><span id="minutes">&nbsp;</span>:<span id="seconds">&nbsp;&nbsp;</div></div>
                     </div>
                     <div id="round">
                         <div id="text_area"></div>
                         <div id="slots">
-                            <div id="slots1"></div>
-                            <div id="slots2"></div>
-                            <div id="slots3"></div>
+                            <div id="slots1"><ul></ul></div>
+                            <div id="slots2"><ul></ul></div>
+                            <div id="slots3"><ul></ul></div>
                         </div>
                     </div>
                     <div id="keyboard">
                         <div id="row1"></div>
                         <div id="row2"></div>
-                        <div id="row3">
-                        </div>
+                        <div id="row3"></div>
                     </div>
                 </div>
             </div>

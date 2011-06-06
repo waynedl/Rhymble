@@ -4,9 +4,15 @@
 #round_header DIV {
     clear:none;
     float: left;
-    background: blue;
     width: 33%;
     height: 30px;
+    text-align:center;  
+}
+#clock {
+}
+
+#prompt {
+    font-size: 1em;
 }
 #round {
     clear: both;
@@ -14,21 +20,55 @@
     height: 100px;
 }
 #text_area {
+    border-bottom: black solid 1px;
+    height: 35px;
     font-size: 2em;
+    text-align: center;
 }
+LI {
+    list-style-type: none;
+}
+#slots1, #slots2, #slots3 {
+    width: 33%;
+    height: 100%;
+    clear:none;
+    float:left;
+    font-size:.7em;
+    text-align: center;
+    overflow:auto;
+}
+LI.slot {
+    display: block;
+    height: 15px;
+    font-size: 10px;
+    border: grey solid 1px;
+    padding-top: 5px;
+}
+.hidden_slot {
+    color: white;
+}
+
 .key{
     clear: none;
     float: left;
+    font-size: 1.5em;
     height: 35px;
     text-align: center;
     padding-top: 15px;
 }
 #go_button {
-    width: 35px;    
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    width: 15px;    
 }
 #del_button {
-    width: 35px;
-    height: 25px;
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    width: 20px;
+    height: 15px;
+    
 }
 .mask {
     display: block;
